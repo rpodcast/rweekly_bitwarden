@@ -1,0 +1,5 @@
+.env
+bw-data/*
+!bw-data/.gitkeep
+caddycerts/*
+!caddycerts/.gitkeep

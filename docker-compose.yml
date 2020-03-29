@@ -1,0 +1,34 @@
+# docker-compose.yml
+version: '3'
+
+services:
+  bitwarden:
+    image: bitwardenrs/server
+    restart: always
+    volumes:
+      - ./bw-data:/data
+    environment:
+      PUID: 1000
+      PGID: 1000
+      WEBSOCKET_ENABLED: 'true' # Required to use websockets
+      SIGNUPS_ALLOWED: 'false'   # set to false to disable signups
+      LOG_FILE: '/data/bitwarden.log'
+      LOG_LEVEL: 'info'
+      ADMIN_TOKEN: "${ADMIN_TOKEN}"
+
+  caddy:
+    image: abiosoft/caddy
+    restart: always
+    volumes:
+      - ./Caddyfile:/etc/Caddyfile:ro
+      - caddycerts:/root/.caddy
+    ports:
+      - 80:80 # needed for Let's Encrypt
+      - 443:443
+    environment:
+      ACME_AGREE: 'true'  # agree to Let's Encrypt Subscriber Agreement
+      DOMAIN: "${DOMAIN}" # CHANGE THIS! Used for Auto Let's Encrypt SSL
+      EMAIL: "${EMAIL}"  # CHANGE THIS! Optional, provided to Let's Encrypt
+
+volumes:
+  caddycerts:
